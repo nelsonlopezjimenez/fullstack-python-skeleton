@@ -119,3 +119,14 @@ def test_unknown_pages_and_ids_show_not_found(client, new_user):
     for path in ["/nope", "/users/not-an-id", "/users/000000000000000000000000"]:
         response = client.get(path)
         assert response.status_code == 404 and "Page not found" in response.text, path
+
+
+def test_static_files_are_revalidated_in_development(client):
+    """Edit style.css, reload, see the change: the browser must not reuse an old copy."""
+    first = client.get("/static/style.css")
+    assert first.headers["cache-control"] == "no-cache"
+    # Unchanged file: the browser's check is answered with an empty 304.
+    again = client.get("/static/style.css", headers={"If-None-Match": first.headers["etag"]})
+    assert again.status_code == 304 and again.content == b""
+    # Pages and the API are not touched by this rule.
+    assert "cache-control" not in client.get("/api/health").headers
