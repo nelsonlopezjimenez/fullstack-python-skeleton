@@ -15,6 +15,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.config import settings
 from app.errors import UserInputError, validation_message
+from app.models.user import User
+from app.routes import api_users
 
 # [BEGINNER] logging is built in (Chapter 3 wrote helpers/logger.js). INFO for every library,
 # DEBUG only for our own "app" logger in development: PyMongo's DEBUG output is very chatty.
@@ -25,7 +27,7 @@ logger.setLevel(logging.INFO if settings.is_production else logging.DEBUG)
 BASE_DIR = Path(__file__).resolve().parent  # [BEGINNER] the folder of this file, like import.meta.dirname
 
 # [BEGINNER] Every Beanie model must be listed here so init_beanie can create its indexes.
-DOCUMENT_MODELS: list = []
+DOCUMENT_MODELS = [User]
 
 
 # [BEGINNER] lifespan = code that runs once at startup (before `yield`) and once at shutdown
@@ -80,6 +82,10 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 @app.get("/api/health")
 async def health():
     return {"status": "ok"}
+
+
+# [BEGINNER] app.include_router is app.use('/', userRoutes) in express.js.
+app.include_router(api_users.router)
 
 
 # --- Error handlers -----------------------------------------------------------------------
