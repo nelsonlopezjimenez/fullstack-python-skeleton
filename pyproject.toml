@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=9.2", "httpx>=0.28"]
+dev = ["pytest>=9.2", "httpx2>=2.16"]
 
 # [BEGINNER] Like the "test" script in package.json: `python -m pytest` reads this section.
 [tool.pytest.ini_options]

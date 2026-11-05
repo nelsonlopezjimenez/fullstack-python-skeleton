@@ -11,7 +11,7 @@ win_amd64. One commit per step. Running log in [build-log.md](build-log.md).
 | 3 | User model (scrypt like Ch03) + users API (`/api/users`, `/api/users/{id}`) | done |
 | 4 | Auth: `/api/auth/sessions` (POST/DELETE), JWT, `require_signin`, `has_authorization` | done |
 | 5 | HTMX + Jinja2 pages: home, users, sign up, sign in, profile, edit, delete, 404 | done |
-| 6 | Tests (pytest) + `api.http` | todo |
+| 6 | Tests (pytest) + `api.http` | done |
 | 7 | Offline: wheelhouse build + offline install scripts + instructions | todo |
 | 8 | README + build log | todo |
 | later | Teaching ladder (stacked `teach/…` branches like Ch03) | open |

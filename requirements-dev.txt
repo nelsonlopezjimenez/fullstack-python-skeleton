@@ -3,4 +3,6 @@
 -r requirements.txt
 
 pytest==9.2.0
-httpx==0.28.1
+# [ADVANCED] httpx2: the successor of httpx (same API). FastAPI's TestClient (Starlette)
+# uses it and prints a deprecation warning with the old httpx.
+httpx2==2.16.0

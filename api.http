@@ -1,0 +1,85 @@
+# Manual smoke test of the whole API, including the database.
+# The SAME requests as Chapter 3's server/api.http; only the port differs (8000 here, 3000 there).
+# Change @baseUrl to http://localhost:3000 and the same file tests the Node server.
+#
+# [BEGINNER] Open this file in VS Code with the "REST Client" extension (humao.rest-client)
+# and click "Send Request" above each block, top to bottom. The server must be running:
+#   python -m uvicorn app.main:app --reload --port 8000
+# (FastAPI's own /docs page is turned off: it loads Swagger UI from a CDN, see app/main.py.)
+
+@baseUrl = http://localhost:8000
+@email = ann@test.io
+@password = secret1
+
+### 1. Sign up → 201
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{ "name": "Ann", "email": "{{email}}", "password": "{{password}}" }
+
+### 2. Sign up again with the same email → 400 "Email already exists"
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{ "name": "Ann", "email": "{{email}}", "password": "{{password}}" }
+
+### 3. Sign up with invalid data → 400 with ALL validation messages
+POST {{baseUrl}}/api/users
+Content-Type: application/json
+
+{ "name": "", "email": "not-an-email", "password": "1" }
+
+### 4. Sign in → 200 { token, user } + httpOnly cookie "t"
+# @name signin
+POST {{baseUrl}}/api/auth/sessions
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "{{password}}" }
+
+###
+@token = {{signin.response.body.token}}
+@userId = {{signin.response.body.user._id}}
+
+### 5. Wrong password → 401 (same message as an unknown email)
+POST {{baseUrl}}/api/auth/sessions
+Content-Type: application/json
+
+{ "email": "{{email}}", "password": "wrong-password" }
+
+### 6. List users (public) → 200, no password fields
+GET {{baseUrl}}/api/users
+
+### 7. Read a user WITHOUT a token → 401
+# [ADVANCED] REST Client remembers cookies, and this server also accepts the "t" cookie
+# (Chapter 3 accepted only the header). If you get 200 here, run request 12 (sign out) first,
+# or turn off "rest-client.rememberCookiesForSubsequentRequests" in the VS Code settings.
+GET {{baseUrl}}/api/users/{{userId}}
+
+### 8. Read a user with the token → 200
+GET {{baseUrl}}/api/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### 9. Unknown (but valid) id → 404 · invalid id → 400
+GET {{baseUrl}}/api/users/000000000000000000000000
+Authorization: Bearer {{token}}
+
+###
+GET {{baseUrl}}/api/users/not-an-id
+Authorization: Bearer {{token}}
+
+### 10. Partial update with PATCH → 200 (fields outside name/email/password are ignored)
+PATCH {{baseUrl}}/api/users/{{userId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "name": "Ann Updated", "salt": "ignored", "created": "2000-01-01" }
+
+### 11. Delete own account → 200
+DELETE {{baseUrl}}/api/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### 12. Sign out → 200, cookie cleared
+DELETE {{baseUrl}}/api/auth/sessions
+
+### 13. Unknown API route → JSON 404
+GET {{baseUrl}}/api/nope
