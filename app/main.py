@@ -1,30 +1,27 @@
 """The FastAPI app: middleware, routes, error handlers (Chapter 3: server/express.js + server.js)."""
 import logging
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from beanie import init_beanie
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 from fastapi.staticfiles import StaticFiles
 from pymongo import AsyncMongoClient
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from app.config import settings
+from app.config import BASE_DIR, settings
 from app.errors import UserInputError, validation_message
 from app.models.user import User
-from app.routes import api_auth, api_users
+from app.routes import api_auth, api_users, pages
 
 # [BEGINNER] logging is built in (Chapter 3 wrote helpers/logger.js). INFO for every library,
 # DEBUG only for our own "app" logger in development: PyMongo's DEBUG output is very chatty.
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger("app")
 logger.setLevel(logging.INFO if settings.is_production else logging.DEBUG)
-
-BASE_DIR = Path(__file__).resolve().parent  # [BEGINNER] the folder of this file, like import.meta.dirname
 
 # [BEGINNER] Every Beanie model must be listed here so init_beanie can create its indexes.
 DOCUMENT_MODELS = [User]
@@ -87,6 +84,8 @@ async def health():
 # [BEGINNER] app.include_router is app.use('/', userRoutes) in express.js.
 app.include_router(api_users.router)
 app.include_router(api_auth.router)
+# The HTML pages (Chapter 3 had these in a separate React client).
+app.include_router(pages.router)
 
 
 # --- Error handlers -----------------------------------------------------------------------
@@ -110,8 +109,17 @@ async def request_validation_error(request: Request, exc: RequestValidationError
     return JSONResponse({"error": validation_message(exc.errors())}, status_code=400)
 
 
+@app.exception_handler(pages.SigninRequired)
+async def signin_required(request: Request, exc: pages.SigninRequired):
+    return pages.signin_required_response(request, exc)
+
+
 @app.exception_handler(StarletteHTTPException)
 async def http_error(request: Request, exc: StarletteHTTPException):
+    # [BEGINNER] A page URL that matches no route gets the HTML "Page not found" page
+    # (Chapter 3: React Router's path="*" → <NotFound />); an /api URL gets JSON.
+    if exc.status_code == 404 and not is_api(request):
+        return pages.templates.TemplateResponse(request, "not_found.html", status_code=404)
     if exc.status_code == 404 and exc.detail == "Not Found":
         # No route matched (FastAPI's own 404), like the app.use('/api', ...) catch-all.
         message = f"Route not found: {request.method} {request.url.path}"
@@ -124,4 +132,6 @@ async def http_error(request: Request, exc: StarletteHTTPException):
 @app.exception_handler(Exception)
 async def unexpected_error(request: Request, exc: Exception):
     logger.exception("Unhandled error on %s %s", request.method, request.url.path)
+    if not is_api(request):
+        return PlainTextResponse("Internal server error", status_code=500)
     return JSONResponse({"error": "Internal server error"}, status_code=500)

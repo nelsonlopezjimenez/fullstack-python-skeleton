@@ -1,8 +1,14 @@
 """Settings read from environment variables and .env (Chapter 3: server/config/config.js)."""
+from pathlib import Path
+
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 DEV_SECRET = "dev-only-secret-do-not-use-in-production"
+
+# [BEGINNER] The app/ folder (this file's folder), like import.meta.dirname in Node.
+# Templates and static files are found from here, wherever the server was started.
+BASE_DIR = Path(__file__).resolve().parent
 
 
 # [BEGINNER] Each field is one environment variable: `port` reads PORT, `mongodb_uri` reads

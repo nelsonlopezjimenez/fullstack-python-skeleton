@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{#- Chapter 3: client/src/user/Profile.jsx + DeleteUser.jsx -#}
+{% block title %}{{ user.name }} · Python Skeleton{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">Profile</h2>
+  <div class="profile">
+    <span class="avatar big">{{ user.name[:1] | upper }}</span>
+    <div>
+      <p class="name">{{ user.name }}</p>
+      <p class="muted">{{ user.email }}</p>
+    </div>
+  </div>
+  {#- [BEGINNER] A Jinja filter call: strftime formats the date on the server.
+      (%d %B %Y, because %-d is not supported on Windows.) -#}
+  <p class="muted">Joined: {{ user.created.strftime("%d %B %Y") }}</p>
+
+  {% if is_owner %}
+    <div class="actions">
+      <a class="button" href="/users/{{ user.id }}/edit">Edit</a>
+      {#- [BEGINNER] hx-delete sends DELETE /users/{id}. hx-confirm asks first (the book used
+          a MUI dialog; the browser's confirm box needs no code). -#}
+      <button type="button" class="danger"
+              hx-delete="/users/{{ user.id }}"
+              hx-confirm="Confirm to delete your account."
+              hx-target="#form-error">Delete account</button>
+    </div>
+    <div id="form-error" aria-live="polite"></div>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,27 @@
+{#- Chapter 3: client/src/core/Menu.jsx.
+    [BEGINNER] A macro is a reusable piece of template with parameters: the closest thing Jinja has
+    to a small React component. navlink("/users", "Users") renders one link and marks it active
+    when it is the current page (React Router's NavLink did that). -#}
+{% macro navlink(href, label) -%}
+  <a href="{{ href }}"{% if path == href %} class="active" aria-current="page"{% endif %}>{{ label }}</a>
+{%- endmacro %}
+
+<header class="appbar">
+  <span class="brand">Python Skeleton</span>
+  <nav>
+    {{ navlink("/", "Home") }}
+    {{ navlink("/users", "Users") }}
+    {#- `auth` comes from template_context() in routes/pages.py: the decoded cookie, or None. -#}
+    {% if auth %}
+      {{ navlink("/users/" ~ auth["_id"], "My Profile") }}
+      {#- [BEGINNER] A plain HTML form: signing out changes state, so it is a POST, never a link (GET).
+          It works even without HTMX. -#}
+      <form method="post" action="/signout" class="inline">
+        <button type="submit" class="link">Sign out</button>
+      </form>
+    {% else %}
+      {{ navlink("/signup", "Sign up") }}
+      {{ navlink("/signin", "Sign In") }}
+    {% endif %}
+  </nav>
+</header>

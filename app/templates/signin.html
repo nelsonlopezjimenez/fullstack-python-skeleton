@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{#- Chapter 3: client/src/auth/Signin.jsx -#}
+{% block title %}Sign in · Python Skeleton{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">Sign In</h2>
+  {% if created %}
+    <p class="notice">New account successfully created. Please sign in.</p>
+  {% endif %}
+  <form hx-post="/signin" hx-target="#form-error" novalidate>
+    {#- [BEGINNER] Where to go after signing in: the protected page that sent us here
+        (Chapter 3 kept it in React Router's location.state.from). -#}
+    <input type="hidden" name="next" value="{{ next }}">
+    <label>Email <input name="email" type="email" autocomplete="email"></label>
+    <label>Password <input name="password" type="password" autocomplete="current-password"></label>
+    <div id="form-error" aria-live="polite"></div>
+    <button type="submit">Submit</button>
+  </form>
+</section>
+{% endblock %}

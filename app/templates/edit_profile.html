@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{#- Chapter 3: client/src/user/EditProfile.jsx -#}
+{% block title %}Edit profile · Python Skeleton{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">Edit Profile</h2>
+  {#- [BEGINNER] hx-patch: HTML forms can only GET or POST, HTMX can send PATCH like the
+      React client did. The fields start with the current values (React loaded them in useEffect). -#}
+  <form hx-patch="/users/{{ user.id }}" hx-target="#form-error" novalidate>
+    <label>Name <input name="name" value="{{ user.name }}" autocomplete="name"></label>
+    <label>Email <input name="email" type="email" value="{{ user.email }}" autocomplete="email"></label>
+    <label>New password <input name="password" type="password" autocomplete="new-password"
+           placeholder="Leave blank to keep the current one"></label>
+    <div id="form-error" aria-live="polite"></div>
+    <div class="actions">
+      <button type="submit">Save</button>
+      <a class="button secondary" href="/users/{{ user.id }}">Cancel</a>
+    </div>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,29 @@
+{#- [BEGINNER] The layout every page extends (Chapter 3: index.html + App.jsx + MainRouter's <Menu />).
+    A page writes {% extends "base.html" %} and fills the blocks below. This text is a Jinja
+    comment (curly brace + hash): it is removed on the server and never reaches the browser,
+    unlike an HTML comment. -#}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {#- [ADVANCED] HTMX settings as JSON (read with JSON.parse, so the strict CSP allows it):
+      - includeIndicatorStyles false: HTMX would otherwise inject an inline <style>, which the
+        Content-Security-Policy in main.py blocks.
+      - responseHandling: HTMX 2 does NOT swap 4xx responses by default. We send form errors as
+        400/401/403 with an HTML fragment, so 4xx is swapped too; 5xx is still an error. -#}
+  <meta name="htmx-config" content='{"includeIndicatorStyles": false, "responseHandling": [{"code": "204", "swap": false}, {"code": "[234]..", "swap": true}, {"code": "...", "swap": false, "error": true}]}'>
+  <title>{% block title %}Python Skeleton{% endblock %}</title>
+  {#- An empty icon, so the browser does not ask for /favicon.ico (a 404 in every page load). -#}
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+  {#- Vendored file, no CDN: works offline. `defer` runs it after the HTML is parsed. -#}
+  <script src="/static/htmx.min.js" defer></script>
+</head>
+<body>
+  {% include "_menu.html" %}
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

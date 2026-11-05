@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{#- Chapter 3: client/src/user/Signup.jsx -#}
+{% block title %}Sign up · Python Skeleton{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">Sign Up</h2>
+  {#- [BEGINNER] hx-post sends the form fields to POST /signup without reloading the page.
+      hx-target: where the HTML answer goes (the error box). On success the server sends
+      HX-Redirect instead, and HTMX opens the sign-in page.
+      React needed useState for every field, an onChange handler and fetch(); the browser's
+      own form does all of that here.
+      [ADVANCED] novalidate turns off the browser's checks (required, type="email"), so the
+      SERVER's messages are what you see: the server is the one that must check anyway. -#}
+  <form hx-post="/signup" hx-target="#form-error" novalidate>
+    <label>Name <input name="name" autocomplete="name"></label>
+    <label>Email <input name="email" type="email" autocomplete="email"></label>
+    <label>Password <input name="password" type="password" autocomplete="new-password"></label>
+    <div id="form-error" aria-live="polite"></div>
+    <button type="submit">Submit</button>
+  </form>
+</section>
+{% endblock %}

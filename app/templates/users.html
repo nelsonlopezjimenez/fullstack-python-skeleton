@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{#- Chapter 3: client/src/user/Users.jsx. React fetched /api/users in useEffect and re-rendered;
+    here the server already has the list when it renders the page, so there is no loading state. -#}
+{% block title %}Users · Python Skeleton{% endblock %}
+{% block content %}
+<section class="card">
+  <h2 class="card-title">All Users</h2>
+  <ul class="list">
+    {#- [BEGINNER] {% for %} ... {% else %} : the else part renders when the list is empty. -#}
+    {% for user in users %}
+      <li><a href="/users/{{ user.id }}"><span class="avatar">{{ user.name[:1] | upper }}</span>{{ user.name }}</a></li>
+    {% else %}
+      <li class="muted">No users yet. <a href="/signup">Sign up</a> to be the first.</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endblock %}
