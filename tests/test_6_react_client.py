@@ -56,3 +56,14 @@ def test_every_imported_file_is_served(client):
 
 def test_htmx_home_links_to_the_react_client(client):
     assert 'href="/react"' in client.get("/").text
+
+
+def test_static_files_are_revalidated_in_development(client):
+    """Edit a component, reload, see the change: the browser must not reuse an old copy."""
+    first = client.get("/static/react/user/Users.js")
+    assert first.headers["cache-control"] == "no-cache"
+    # Unchanged file: the browser's check is answered with an empty 304.
+    again = client.get("/static/react/user/Users.js", headers={"If-None-Match": first.headers["etag"]})
+    assert again.status_code == 304 and again.content == b""
+    # Pages and the API are not touched by this rule.
+    assert "cache-control" not in client.get("/api/health").headers

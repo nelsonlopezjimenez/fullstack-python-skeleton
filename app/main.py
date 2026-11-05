@@ -73,6 +73,20 @@ async def security_headers(request: Request, call_next):
     return response
 
 
+# [BEGINNER] Development only: "no-cache" makes the browser ask the server about every static
+# file on every page load. Without it the browser may reuse an old copy, so you save a .js/.jsx/
+# .css file, reload, and still see the old version. An unchanged file costs only a tiny
+# "304 Not Modified" answer (StaticFiles compares the ETag), so reloads stay fast.
+# [ADVANCED] "no-cache" does not mean "do not store"; it means "check before using" (that is
+# "no-store"). In production this middleware does nothing and the browser's normal caching applies.
+@app.middleware("http")
+async def static_files_revalidate(request: Request, call_next):
+    response = await call_next(request)
+    if not settings.is_production and request.url.path.startswith("/static/"):
+        response.headers["Cache-Control"] = "no-cache"
+    return response
+
+
 app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
 
