@@ -16,7 +16,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.config import settings
 from app.errors import UserInputError, validation_message
 from app.models.user import User
-from app.routes import api_users
+from app.routes import api_auth, api_users
 
 # [BEGINNER] logging is built in (Chapter 3 wrote helpers/logger.js). INFO for every library,
 # DEBUG only for our own "app" logger in development: PyMongo's DEBUG output is very chatty.
@@ -86,6 +86,7 @@ async def health():
 
 # [BEGINNER] app.include_router is app.use('/', userRoutes) in express.js.
 app.include_router(api_users.router)
+app.include_router(api_auth.router)
 
 
 # --- Error handlers -----------------------------------------------------------------------
