@@ -12,7 +12,7 @@ win_amd64. One commit per step. Running log in [build-log.md](build-log.md).
 | 4 | Auth: `/api/auth/sessions` (POST/DELETE), JWT, `require_signin`, `has_authorization` | done |
 | 5 | HTMX + Jinja2 pages: home, users, sign up, sign in, profile, edit, delete, 404 | done |
 | 6 | Tests (pytest) + `api.http` | done |
-| 7 | Offline: wheelhouse build + offline install scripts + instructions | todo |
+| 7 | Offline: wheelhouse build + offline install scripts + instructions | done |
 | 8 | README + build log | todo |
 | later | Teaching ladder (stacked `teach/…` branches like Ch03) | open |
 | later | Push to GitHub, then Gitea via the bridge | open (user) |
