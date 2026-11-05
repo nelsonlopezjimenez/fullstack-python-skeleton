@@ -1,0 +1,25 @@
+# [BEGINNER] pyproject.toml is the Python version of package.json: name, version, the Python
+# version it needs, and its top-level dependencies. The exact versions (the "lock") are in
+# requirements.txt, like package-lock.json.
+[project]
+name = "fullstack-python-skeleton"
+version = "0.1.0"
+description = "Chapter 3 MERN skeleton (users + auth) ported to FastAPI + MongoDB + HTMX/Jinja2"
+requires-python = ">=3.13"
+dependencies = [
+  "fastapi>=0.162",
+  "uvicorn>=0.54",
+  "beanie>=2.2",
+  "PyJWT>=2.15",
+  "Jinja2>=3.1",
+  "python-multipart>=0.0.33",
+  "pydantic-settings>=2.16",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=9.2", "httpx>=0.28"]
+
+# [BEGINNER] Like the "test" script in package.json: `python -m pytest` reads this section.
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
