@@ -15,7 +15,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.config import BASE_DIR, settings
 from app.errors import UserInputError, validation_message
 from app.models.user import User
-from app.routes import api_auth, api_users, pages
+from app.routes import api_auth, api_users, pages, react_client
 
 # [BEGINNER] logging is built in (Chapter 3 wrote helpers/logger.js). INFO for every library,
 # DEBUG only for our own "app" logger in development: PyMongo's DEBUG output is very chatty.
@@ -86,6 +86,8 @@ app.include_router(api_users.router)
 app.include_router(api_auth.router)
 # The HTML pages (Chapter 3 had these in a separate React client).
 app.include_router(pages.router)
+# The same pages as a React client under /react (app/static/react/), for comparison.
+app.include_router(react_client.router)
 
 
 # --- Error handlers -----------------------------------------------------------------------

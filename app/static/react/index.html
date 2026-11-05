@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- Chapter 3: client/index.html. FastAPI sends this same file for every /react/... URL
+     (app/routes/react_client.py); React Router then shows the right page. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>React Skeleton</title>
+  <link rel="icon" href="data:,">
+  <!-- The same stylesheet as the HTMX pages (in place of MUI), so the two look alike. -->
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- [BEGINNER] type="module": the browser itself follows the `import` lines from file to file,
+       the job Vite did in Chapter 3. Modules are deferred: they run after the HTML is parsed.
+       [ADVANCED] An external file, not inline code: the Content-Security-Policy in app/main.py
+       (script-src 'self') blocks inline <script> blocks. -->
+  <script type="module" src="/static/react/main.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+  <noscript>This version needs JavaScript. The HTMX version works without it: <a href="/">open it</a>.</noscript>
+</body>
+</html>

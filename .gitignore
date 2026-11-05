@@ -12,3 +12,6 @@ __pycache__/
 # so it is copied by USB / share / a package server, never committed.
 wheelhouse/
 *.zip
+
+# Only for tools/vendor-react (maintainer, builds app/static/vendor/react-all.js)
+node_modules/

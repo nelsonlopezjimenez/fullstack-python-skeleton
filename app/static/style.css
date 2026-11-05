@@ -79,5 +79,13 @@ button.danger { background: var(--danger); }
 .error { color: var(--danger); margin: 0 0 16px; }
 .notice { color: #2e7d32; }
 
+/* --- Dialogs (React client only: Signup's "New Account" and DeleteUser's confirmation) --- */
+.backdrop {
+  position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
+  background: rgb(0 0 0 / 0.5);
+}
+.backdrop .dialog { margin: 0; width: 100%; max-width: 400px; }
+button:disabled { opacity: 0.6; cursor: default; }
+
 /* [BEGINNER] HTMX adds the class htmx-request while a request is running. */
 form.htmx-request button[type="submit"] { opacity: 0.6; }

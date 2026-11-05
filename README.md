@@ -15,6 +15,7 @@ The `/api` routes, their JSON and their error messages are the same as Chapter 3
 
 - **What maps to what** (packages, files, concepts): [docs/mern-to-python.md](docs/mern-to-python.md)
 - **No internet in the lab**: [instructions/offline-setup.md](instructions/offline-setup.md)
+- **The same pages as a React client** (React 19, no Node, no build) at `/react`: [docs/react-client.md](docs/react-client.md)
 
 ## Quick start (online)
 
@@ -51,9 +52,12 @@ app/
   routes/api_auth.py   /api/auth/sessions       (auth.routes.js)
   routes/pages.py      HTML pages               (the React client)
   templates/           Jinja2 pages and fragments
+  routes/react_client.py  /react/...           (index.html for every React Router URL)
   static/              htmx.min.js (vendored), style.css, seashell.jpg
+  static/react/        the React client: plain ES modules + htm, one file per Chapter 3 component
+  static/vendor/       react-all.js: React, ReactDOM, React Router, htm (vendored, built by tools/vendor-react)
 tests/                 pytest: unit tests + API + pages (MongoDB tests skip if it is down)
-tools/                 build-wheelhouse.ps1, install-offline.ps1
+tools/                 build-wheelhouse.ps1, install-offline.ps1, vendor-react/ (maintainer only)
 ```
 
 Code comments marked `[BEGINNER]` explain Python and FastAPI basics; `[ADVANCED]` comments explain
