@@ -2,6 +2,10 @@
 //
 //   cd tools/vendor-react
 //   npm ci          (needs internet, or a Verdaccio registry)
+//
+// [ADVANCED] Keep package-lock.json pointing at https://registry.npmjs.org/. If your npm uses a
+// local Verdaccio, npm writes http://localhost:4873/ into the lock: replace it before committing
+// (the sha512 integrity hashes are the same, so npm ci still verifies every package).
 //   npm run build
 //
 // Then commit app/static/vendor/react-all.js. Students and lab machines never run this:
