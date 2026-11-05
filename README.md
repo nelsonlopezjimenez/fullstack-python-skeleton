@@ -16,6 +16,7 @@ The `/api` routes, their JSON and their error messages are the same as Chapter 3
 - **What maps to what** (packages, files, concepts): [docs/mern-to-python.md](docs/mern-to-python.md)
 - **No internet in the lab**: [instructions/offline-setup.md](instructions/offline-setup.md)
 - **The same pages as a React client** (React 19, no Node, no build) at `/react`: [docs/react-client.md](docs/react-client.md)
+- **The same pages in real JSX, compiled in the browser by Babel** (demo only) at `/react-jsx`: same doc
 
 ## Quick start (online)
 
@@ -55,7 +56,8 @@ app/
   routes/react_client.py  /react/...           (index.html for every React Router URL)
   static/              htmx.min.js (vendored), style.css, seashell.jpg
   static/react/        the React client: plain ES modules + htm, one file per Chapter 3 component
-  static/vendor/       react-all.js: React, ReactDOM, React Router, htm (vendored, built by tools/vendor-react)
+  static/react-jsx/    the same client in JSX + jsx-loader.js (Babel in the browser, demo only)
+  static/vendor/       react-all.js (React, ReactDOM, React Router, htm), babel.min.js; built by tools/vendor-react
 tests/                 pytest: unit tests + API + pages (MongoDB tests skip if it is down)
 tools/                 build-wheelhouse.ps1, install-offline.ps1, vendor-react/ (maintainer only)
 ```

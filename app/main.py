@@ -57,6 +57,22 @@ if settings.cors_origins:
     )
 
 
+STRICT_CSP = (
+    "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; "
+    "base-uri 'self'; form-action 'self'"
+)
+# [ADVANCED] The in-browser JSX demo (/react-jsx) runs code that Babel compiled a moment ago in
+# the page, as blob: URLs. A strict policy blocks that, which is the point of a CSP: code that
+# was not on the server cannot run. So the demo needs `blob:` in script-src. One more reason
+# compiling in the browser is for teaching only; /react (htm) runs under STRICT_CSP.
+JSX_DEMO_CSP = STRICT_CSP + "; script-src 'self' blob:"
+
+
+def is_jsx_demo(request: Request) -> bool:
+    path = request.url.path
+    return path == "/react-jsx" or path.startswith("/react-jsx/")
+
+
 # [ADVANCED] A small stand-in for helmet: a few security headers on every response.
 # The CSP only allows files from this server, which is why htmx.min.js is vendored in
 # app/static/ (no CDN), and why the templates use no inline <script> or style="" attributes.
@@ -64,8 +80,7 @@ if settings.cors_origins:
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
     response.headers["Content-Security-Policy"] = (
-        "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'; "
-        "base-uri 'self'; form-action 'self'"
+        JSX_DEMO_CSP if is_jsx_demo(request) else STRICT_CSP
     )
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["Referrer-Policy"] = "no-referrer"
@@ -100,7 +115,8 @@ app.include_router(api_users.router)
 app.include_router(api_auth.router)
 # The HTML pages (Chapter 3 had these in a separate React client).
 app.include_router(pages.router)
-# The same pages as a React client under /react (app/static/react/), for comparison.
+# The same pages as a React client under /react (app/static/react/), for comparison,
+# and in real JSX compiled in the browser under /react-jsx (app/static/react-jsx/, demo only).
 app.include_router(react_client.router)
 
 

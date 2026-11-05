@@ -85,3 +85,38 @@ npm run build      # esbuild: react, react-dom/client, react-router, htm → one
 Versions are pinned in `tools/vendor-react/package.json` (with `package-lock.json`).
 `tools/vendor-react/entry.js` lists what the file exports; add a name there if a component needs
 another React function. Students and lab machines never run any of this.
+
+## The in-browser JSX demo (`/react-jsx`, demo only)
+
+The same pages again, this time in **real JSX** with Chapter 3's import lines
+(`import { useState } from 'react'`, `import { Link } from 'react-router'`), in
+`app/static/react-jsx/*.jsx`. The browser compiles them with **Babel standalone**
+(`app/static/vendor/babel.min.js`) when the page loads. Open **http://localhost:8000/react-jsx**.
+
+How it works, in `app/static/react-jsx/jsx-loader.js` (about 60 lines, the job Vite does):
+
+1. fetch `main.jsx` → `Babel.transform()` → JavaScript;
+2. rewrite its imports: `'react'`, `'react-router'`, `'react-dom/client'` → `/static/vendor/react-all.js`,
+   and other `.jsx` files → compile those first (step 1), recursively;
+3. run the result as an ES module (from a `blob:` URL). `lazy(() => import('./x.jsx'))` compiles
+   that page the first time it is opened.
+
+The usual tutorial approach, `<script type="text/babel" src="App.jsx">`, can't do this: each file
+becomes a separate script, so `import` between `.jsx` files fails.
+
+**Why it is for demos only** (worth saying in class):
+
+| | `/react` (htm) | `/react-jsx` (Babel in the browser) | Chapter 3 (Vite) |
+|---|---|---|---|
+| Syntax | `` html`<${Link} to="/">` `` | JSX, same as the book | JSX |
+| Who compiles | nobody | **every visitor's browser, on every load** | the developer, once (`vite build`) |
+| Extra download | none | Babel, 2.4 MB | none |
+| First load on the lab PC (measured, headless Edge) | ~1.9 s | ~6.2 s | |
+| Content-Security-Policy | strict (`script-src 'self'`) | weaker: `script-src 'self' blob:` (only on `/react-jsx`) | strict |
+| JSX syntax error | (no JSX) | shown on the page when it loads | shown in the terminal before you run it |
+
+So it is good for showing JSX exactly as the book writes it, on machines without Node. For
+anything students build on, `/react` (or Vite, where Node is allowed) is the honest choice.
+
+A syntax error in a `.jsx` file appears on the page with Babel's code frame, a bit like Vite's
+error overlay. Try deleting a `</section>` in `user/Users.jsx` and reloading `/react-jsx/users`.

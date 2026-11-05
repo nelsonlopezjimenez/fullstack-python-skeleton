@@ -10,6 +10,7 @@
 //
 // Then commit app/static/vendor/react-all.js. Students and lab machines never run this:
 // they get the finished file with the repo, like app/static/htmx.min.js.
+import { copyFileSync } from 'node:fs'
 import { build } from 'esbuild'
 
 await build({
@@ -31,3 +32,7 @@ await build({
   conditions: ['development'],
   logLevel: 'info'
 })
+
+// Babel standalone (the JSX compiler, ~2.4 MB) for the in-browser JSX demo: copied as published.
+copyFileSync('node_modules/@babel/standalone/babel.min.js', '../../app/static/vendor/babel.min.js')
+console.log('  ../../app/static/vendor/babel.min.js  copied')

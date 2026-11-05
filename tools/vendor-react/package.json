@@ -1,12 +1,13 @@
 {
   "name": "vendor-react",
   "private": true,
-  "description": "MAINTAINER ONLY, on a machine with Node + internet: builds app/static/vendor/react-all.js. Students never run this.",
+  "description": "MAINTAINER ONLY, on a machine with Node + internet: builds app/static/vendor/react-all.js and copies babel.min.js. Students never run this.",
   "type": "module",
   "scripts": {
     "build": "node build.mjs"
   },
   "dependencies": {
+    "@babel/standalone": "8.1.1",
     "htm": "3.1.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",

@@ -67,3 +67,43 @@ def test_static_files_are_revalidated_in_development(client):
     assert again.status_code == 304 and again.content == b""
     # Pages and the API are not touched by this rule.
     assert "cache-control" not in client.get("/api/health").headers
+
+
+# --- The in-browser JSX demo (/react-jsx) ---------------------------------------------------
+def test_jsx_demo_urls_get_its_index_html(client):
+    for path in ["/react-jsx", "/react-jsx/users", "/react-jsx/users/123/edit"]:
+        response = client.get(path)
+        assert response.status_code == 200, path
+        assert 'src="/static/vendor/babel.min.js"' in response.text, path
+        assert 'src="/static/react-jsx/jsx-loader.js"' in response.text, path
+
+
+def test_only_the_jsx_demo_gets_the_weaker_csp(client):
+    demo = client.get("/react-jsx/users").headers["content-security-policy"]
+    assert "script-src 'self' blob:" in demo and "unsafe" not in demo
+    for path in ["/", "/react", "/react-jsxx", "/api/health"]:
+        assert "blob:" not in client.get(path).headers["content-security-policy"], path
+
+
+def test_jsx_demo_files_are_served(client):
+    for path in ["/static/vendor/babel.min.js", "/static/react-jsx/jsx-loader.js"]:
+        assert client.get(path).status_code == 200, path
+    # Every .jsx file imported (statically or with lazy import()) by another one exists.
+    seen, todo = set(), ["/static/react-jsx/main.jsx"]
+    while todo:
+        url = todo.pop()
+        if url in seen:
+            continue
+        seen.add(url)
+        response = client.get(url)
+        assert response.status_code == 200, url
+        base = url.rsplit("/", 1)[0]
+        for spec in re.findall(r"""(?:from|import\()\s*['"](\.[^'"]+)['"]""", response.text):
+            parts = base.split("/")
+            for piece in spec.split("/"):
+                if piece == "..":
+                    parts.pop()
+                elif piece != ".":
+                    parts.append(piece)
+            todo.append("/".join(parts))
+    assert len([u for u in seen if u.endswith(".jsx")]) == 14  # every .jsx file in the folder

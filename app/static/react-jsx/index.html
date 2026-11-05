@@ -1,0 +1,21 @@
+<!doctype html>
+<!-- The in-browser JSX demo. FastAPI sends this file for every /react-jsx/... URL
+     (app/routes/react_client.py). DEMO ONLY: see the comments in jsx-loader.js. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>React Skeleton (JSX demo)</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/style.css">
+  <!-- 1. Babel standalone: the JSX compiler, as a normal script (it sets the global `Babel`). -->
+  <script src="/static/vendor/babel.min.js" defer></script>
+  <!-- 2. The loader: compiles main.jsx and everything it imports, then runs it. Module scripts
+       run after `defer` scripts, so Babel is ready by then. -->
+  <script type="module" src="/static/react-jsx/jsx-loader.js"></script>
+</head>
+<body>
+  <div id="root"><p class="card muted">Compiling JSX in the browser…</p></div>
+  <noscript>This demo needs JavaScript. The HTMX version works without it: <a href="/">open it</a>.</noscript>
+</body>
+</html>

@@ -21,6 +21,10 @@ export const {
 
 export { createRoot } from 'react-dom/client'
 
+// What compiled JSX calls (Babel's "automatic" runtime turns <p>hi</p> into jsx('p', {...})).
+// Used by the in-browser JSX demo (app/static/react-jsx/); the htm client does not need it.
+export { jsx, jsxs } from 'react/jsx-runtime'
+
 export {
   BrowserRouter, Link, Navigate, NavLink, Outlet, Route, Routes, useLocation, useNavigate, useParams
 } from 'react-router'

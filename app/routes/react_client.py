@@ -1,6 +1,7 @@
 """The React client (Chapter 3: client/, without Vite and without Node).
 
-    GET /react, /react/...   the same index.html for every URL; React Router picks the page
+    GET /react, /react/...           the same index.html for every URL; React Router picks the page
+    GET /react-jsx, /react-jsx/...   the same pages in real JSX, compiled IN THE BROWSER (demo only)
 
 [BEGINNER] A "single-page app" has ONE HTML page. When you open /react/users/123 directly
 (or press F5 there), the server must still answer with index.html, and React Router reads the
@@ -18,6 +19,7 @@ from app.config import BASE_DIR
 router = APIRouter(include_in_schema=False)
 
 INDEX = BASE_DIR / "static" / "react" / "index.html"
+JSX_INDEX = BASE_DIR / "static" / "react-jsx" / "index.html"
 
 
 # [BEGINNER] Two decorators, one function: /react and anything below it.
@@ -26,3 +28,11 @@ INDEX = BASE_DIR / "static" / "react" / "index.html"
 @router.get("/react/{path:path}")
 async def react_client(path: str = ""):
     return FileResponse(INDEX)
+
+
+# [ADVANCED] The in-browser JSX demo (app/static/react-jsx/jsx-loader.js). It gets a weaker
+# Content-Security-Policy than every other page: see JSX_DEMO_CSP in app/main.py.
+@router.get("/react-jsx")
+@router.get("/react-jsx/{path:path}")
+async def react_jsx_demo(path: str = ""):
+    return FileResponse(JSX_INDEX)
