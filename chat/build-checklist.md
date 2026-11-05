@@ -13,7 +13,7 @@ win_amd64. One commit per step. Running log in [build-log.md](build-log.md).
 | 5 | HTMX + Jinja2 pages: home, users, sign up, sign in, profile, edit, delete, 404 | done |
 | 6 | Tests (pytest) + `api.http` | done |
 | 7 | Offline: wheelhouse build + offline install scripts + instructions | done |
-| 8 | README + build log | todo |
+| 8 | README + build log | done |
 | later | Teaching ladder (stacked `teach/…` branches like Ch03) | open |
 | later | Push to GitHub, then Gitea via the bridge | open (user) |
 | later | Port Chapter 5 (mern-social) | open |
