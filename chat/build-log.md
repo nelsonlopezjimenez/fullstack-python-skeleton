@@ -63,3 +63,15 @@ Checklist: [build-checklist.md](build-checklist.md). One entry per commit.
     → put the wheel on PYTHONPATH and run `python -m pip install pip.whl`.
 
 ## 8. README + this log (`docs: README and build log`)
+
+## 9. Python 3.14 (2026-11-11, `feat: Python 3.14 ...`)
+- **Changed:** tools/build-wheelhouse.ps1 and tools/install-offline.ps1 default to 3.14 and pass
+  `--ignore-requires-python`; .gitignore (`wheelhouse-*/`); README, offline-setup.md, mern-to-python.md say 3.14.
+- **Verified:** cp314 wheelhouse = 34 wheels (3 compiled: MarkupSafe, pydantic_core, pymongo), 9 MB zip.
+  Fresh copy + unzip + install-offline (short path) → .venv on 3.14 → 50 passed. Old 3.13 wheelhouse kept
+  locally as `wheelhouse-py3.13\` + its zip.
+- **Surprises:**
+  - Beanie 2.2.0 (newest) declares `Requires-Python <3.14` → `No matching distribution found for beanie==2.2.0`
+    until `--ignore-requires-python`. It is pure Python, and the whole suite passes on 3.14.
+  - A .venv install in a very long temp path failed (`...dist-info\sboms\...` > 260 characters) → keep repos on
+    short paths or enable long paths (already in offline-setup.md).

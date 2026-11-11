@@ -18,7 +18,7 @@
 #>
 param(
   # Python version of the OFFLINE machines (major.minor).
-  [string]$PythonVersion = "3.13",
+  [string]$PythonVersion = "3.14",
   # Wheel platform tag: win_amd64 | manylinux2014_x86_64 | macosx_11_0_arm64 ...
   [string]$Platform = "win_amd64",
   [string]$Out = "wheelhouse",
@@ -36,12 +36,16 @@ Write-Host "Downloading wheels for Python $PythonVersion on $Platform into $Out\
 # without installing them.
 # [ADVANCED] --only-binary=:all: is REQUIRED with --platform/--python-version: pip cannot
 # build source packages for another platform, so only finished wheels are accepted.
+# [ADVANCED] --ignore-requires-python: Beanie 2.2.0 (the newest release) declares
+# Requires-Python <3.14. It is pure Python and the whole test suite passes on 3.14, so the
+# limit is ignored here AND in tools\install-offline.ps1.
 & $Python -m pip download -r requirements-dev.txt -d $Out `
-  --only-binary=:all: --platform $Platform --python-version $PythonVersion --implementation cp
+  --only-binary=:all: --platform $Platform --python-version $PythonVersion --implementation cp `
+  --ignore-requires-python --disable-pip-version-check
 if ($LASTEXITCODE -ne 0) { throw "pip download failed" }
 
 # pip itself, as a wheel: lets tools\install-offline.ps1 repair a Python that has no pip.
-& $Python -m pip download pip -d $Out --only-binary=:all: --no-deps
+& $Python -m pip download pip -d $Out --only-binary=:all: --no-deps --disable-pip-version-check
 if ($LASTEXITCODE -ne 0) { throw "pip download pip failed" }
 
 $count = (Get-ChildItem $Out -Filter *.whl).Count

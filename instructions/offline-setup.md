@@ -7,7 +7,7 @@ over.
 ```
  ONLINE machine                                   OFFLINE lab machine
  ──────────────                                   ───────────────────
- python.org installer (.exe)      ── USB / share ──►  install Python 3.13
+ python.org installer (.exe)      ── USB / share ──►  install Python 3.14
  tools\build-wheelhouse.ps1 -Zip  ── USB / share ──►  unzip as wheelhouse\
  git clone / Gitea                ── LAN ─────────►  tools\install-offline.ps1
                                                       python -m pytest
@@ -26,14 +26,14 @@ over.
 | Package file | `.tgz` (almost always plain JS) | `.whl` (**may contain compiled code for one OS, CPU and Python version**) |
 
 The last row is the important difference. Most npm packages run anywhere. A wheel such as
-`pydantic_core-2.50.2-cp313-cp313-win_amd64.whl` only installs on **CPython 3.13, Windows, 64-bit**.
-The name says so: `cp313` is the Python version and `win_amd64` is the platform. Pure-Python
+`pydantic_core-2.50.2-cp314-cp314-win_amd64.whl` only installs on **CPython 3.14, Windows, 64-bit**.
+The name says so: `cp314` is the Python version and `win_amd64` is the platform. Pure-Python
 wheels end in `py3-none-any.whl` and work everywhere. This project has only three compiled wheels:
 `pydantic_core`, `pymongo` and `MarkupSafe`.
 
 ## 1. Python itself
 
-Download the **Windows installer (64-bit)** for the latest Python 3.13.x from python.org on the
+Download the **Windows installer (64-bit)** for the latest Python 3.14.x from python.org on the
 online machine. It installs offline, and it already contains pip and the `py` launcher.
 
 Interactive install: tick **"Add python.exe to PATH"**. On the last screen, click **"Disable path
@@ -42,7 +42,7 @@ length limit"** (it needs admin). Long `.venv` paths can otherwise fail with
 
 Silent install for a whole lab:
 ```powershell
-python-3.13.x-amd64.exe /quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_launcher=1
+python-3.14.x-amd64.exe /quiet InstallAllUsers=1 PrependPath=1 Include_pip=1 Include_launcher=1
 ```
 
 Check it:
@@ -70,15 +70,15 @@ python -m pip --version
 powershell -ExecutionPolicy Bypass -File tools\build-wheelhouse.ps1 -Zip
 ```
 
-This downloads every package in `requirements-dev.txt`, plus pip itself, for **Python 3.13 on
-win_amd64**. The result is `wheelhouse\` and `wheelhouse-win_amd64-py3.13.zip` (about 9 MB, 34 wheels).
+This downloads every package in `requirements-dev.txt`, plus pip itself, for **Python 3.14 on
+win_amd64**. The result is `wheelhouse\` and `wheelhouse-win_amd64-py3.14.zip` (about 9 MB, 34 wheels).
 The online machine can run any Python version, because it only downloads.
 
 Other targets:
 ```powershell
 tools\build-wheelhouse.ps1 -Platform manylinux2014_x86_64 -Out wheelhouse    # Linux PCs, same folder
 tools\build-wheelhouse.ps1 -Platform macosx_11_0_arm64    -Out wheelhouse    # Apple Silicon Macs
-tools\build-wheelhouse.ps1 -PythonVersion 3.14                               # if the lab gets 3.14
+tools\build-wheelhouse.ps1 -PythonVersion 3.13                               # a lab still on 3.13
 ```
 
 One folder can hold several platforms, and pip picks the matching wheel on each machine.
@@ -86,7 +86,7 @@ One folder can hold several platforms, and pip picks the matching wheel on each 
 Without the script (bash or PowerShell, same flags):
 ```bash
 python -m pip download -r requirements-dev.txt -d wheelhouse \
-  --only-binary=:all: --platform win_amd64 --python-version 3.13 --implementation cp
+  --only-binary=:all: --platform win_amd64 --python-version 3.14 --implementation cp --ignore-requires-python
 python -m pip download pip -d wheelhouse --only-binary=:all: --no-deps
 ```
 
@@ -99,14 +99,14 @@ Then:
 powershell -ExecutionPolicy Bypass -File tools\install-offline.ps1
 ```
 
-The script finds Python 3.13, creates `.venv`, repairs pip if needed, installs from `wheelhouse\`
+The script finds Python 3.14, creates `.venv`, repairs pip if needed, installs from `wheelhouse\`
 with `--no-index` (pip never tries the internet) and creates `.env`.
 
 By hand:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1      # Git Bash: source .venv/Scripts/activate · Linux/macOS: source .venv/bin/activate
-python -m pip install --no-index --find-links wheelhouse -r requirements-dev.txt
+python -m pip install --no-index --find-links wheelhouse --ignore-requires-python -r requirements-dev.txt
 copy .env.example .env
 python -m pytest
 python -m uvicorn app.main:app --reload --port 8000

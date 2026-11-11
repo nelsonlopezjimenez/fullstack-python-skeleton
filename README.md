@@ -6,7 +6,7 @@ Chapter 3's MERN skeleton (users, sign up, sign in, profile, edit, delete), rebu
 | | MERN (Chapter 3) | Here |
 |---|---|---|
 | Database | MongoDB + Mongoose | MongoDB + **Beanie** |
-| Server | Express on Node | **FastAPI** on Python 3.13 |
+| Server | Express on Node | **FastAPI** on Python 3.14 |
 | Frontend | React + Vite + MUI | **Jinja2** templates + **HTMX** (one vendored JS file, no build) |
 | Packages | npm, `node_modules/`, Verdaccio | pip, `.venv/`, a wheelhouse folder or devpi/pypiserver |
 
@@ -21,7 +21,7 @@ The `/api` routes, their JSON and their error messages are the same as Chapter 3
 ```powershell
 python -m venv .venv                          # the Python version of node_modules
 .\.venv\Scripts\Activate.ps1                  # Git Bash: source .venv/Scripts/activate
-python -m pip install -r requirements-dev.txt # npm install
+python -m pip install --ignore-requires-python -r requirements-dev.txt # npm install (flag: Beanie on 3.14)
 copy .env.example .env                        # then set JWT_SECRET
 python -m pytest                              # npm test (MongoDB on localhost:27017)
 python -m uvicorn app.main:app --reload --port 8000   # npm run dev

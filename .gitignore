@@ -11,4 +11,5 @@ __pycache__/
 # Offline package folder built by tools/build-wheelhouse.ps1: binary and platform-specific,
 # so it is copied by USB / share / a package server, never committed.
 wheelhouse/
+wheelhouse-*/
 *.zip

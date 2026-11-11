@@ -5,7 +5,7 @@
 
 .DESCRIPTION
   Steps (each one prints what it does):
-    1. find Python 3.13 (the py launcher first, then python on the PATH)
+    1. find Python 3.14 (the py launcher first, then python on the PATH)
     2. create .venv (the Python version of node_modules)
     3. make sure .venv has pip; if not, install pip from the wheel in the wheelhouse
     4. install requirements-dev.txt from the wheelhouse only
@@ -18,7 +18,7 @@
 #>
 param(
   [string]$Wheelhouse = "wheelhouse",
-  [string]$PythonVersion = "3.13"
+  [string]$PythonVersion = "3.14"
 )
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path -Parent $PSScriptRoot)
@@ -37,7 +37,7 @@ function Test-Command([string]$Exe, [string[]]$Arguments) {
 
 # --- 1. Find Python --------------------------------------------------------------------------
 # [BEGINNER] On Windows, "py" is the Python launcher installed by the python.org installer.
-# `py -0p` lists every Python on the machine; `py -3.13` picks that version.
+# `py -0p` lists every Python on the machine; `py -3.14` picks that version.
 $pyExe = $null
 $pyArgs = @()
 $versionCheck = "import sys; sys.exit(0 if f'{sys.version_info[0]}.{sys.version_info[1]}' == '$PythonVersion' else 1)"
@@ -87,7 +87,10 @@ if (-not (Test-Command $venvPython @("-m", "pip", "--version"))) {
 Write-Host "4. Installing requirements-dev.txt from $Wheelhouse (no internet)"
 # [BEGINNER] --no-index: never contact PyPI. --find-links: look for wheels in this folder.
 # This is `npm install --offline` with the cache in a folder you can see.
-& $venvPython -m pip install --no-index --find-links $Wheelhouse -r requirements-dev.txt
+# [ADVANCED] --ignore-requires-python: Beanie 2.2.0 (the newest release) declares
+# Requires-Python <3.14. It is pure Python and the whole test suite passes on 3.14.
+& $venvPython -m pip install --no-index --find-links $Wheelhouse --ignore-requires-python `
+  --disable-pip-version-check -r requirements-dev.txt
 if ($LASTEXITCODE -ne 0) { throw "pip install failed (is the wheelhouse for this Python version and platform?)" }
 
 # --- 5. Settings -----------------------------------------------------------------------------

@@ -13,7 +13,7 @@ because the lab machines have no Node.js.
 | Mongoose | **Beanie** (ODM, built on Pydantic + PyMongo's async driver) | Models are classes with typed fields. They validate and define indexes, like a Mongoose schema. |
 | **E**xpress | **FastAPI** (on Starlette) | Routes are decorated `async` functions. Middleware such as `requireSignin` becomes `Depends(...)`. |
 | **R**eact | **Jinja2 templates + HTMX** | Server-rendered HTML. A ~50 KB vendored JS file sends `hx-post` / `hx-patch` / `hx-delete` requests and swaps the HTML that comes back. No build step and no Node. |
-| **N**ode | CPython 3.13 | |
+| **N**ode | CPython 3.14 | |
 
 ## The tools
 

@@ -17,3 +17,4 @@ win_amd64. One commit per step. Running log in [build-log.md](build-log.md).
 | later | Teaching ladder (stacked `teach/…` branches like Ch03) | open |
 | later | Push to GitHub, then Gitea via the bridge | open (user) |
 | later | Port Chapter 5 (mern-social) | open |
+| 9 | Python 3.14 (wheelhouse + offline install default) | done |
